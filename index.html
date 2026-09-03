@@ -21,7 +21,7 @@
 .external-screen .info-site-icon{position:absolute;left:14px;top:13px;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold);font:11px var(--font-mono)}
 .external-screen .info-item{position:relative;padding-left:50px}
 .external-screen .info-title{padding-right:20px}
-</style><script>(function(){
+</style>`+'<scr'+'ipt>(function(){'+`
 const TYPE={
 'Zaim':['アプリ','それ以外'],'マネーフォワード ME':['サイト','それ以外'],'TimeTree':['アプリ','それ以外'],'MILIZE「ミルイゼ」':['サイト','それ以外'],'Famm':['アプリ','それ以外'],'家族アルバム みてね':['アプリ','それ以外'],'BABY365':['アプリ','それ以外'],'トツキトオカ':['アプリ','それ以外'],'ぴよログ':['サイト','それ以外'],'ママリ':['サイト','それ以外'],'ルナルナ':['サイト','それ以外'],'こども家庭庁':['サイト','行政'],'厚生労働省':['サイト','行政'],'共育プロジェクト':['サイト','行政'],'こども家庭庁｜公式YouTube':['YouTube','行政'],'こども家庭庁｜公式X':['X','行政'],'こども家庭庁｜公式note':['サイト','行政'],'こども家庭庁｜公式サイト':['サイト','行政'],'母子健康手帳情報支援サイト':['サイト','行政'],'子育てタウン':['アプリ','それ以外'],'母子モ':['アプリ','それ以外']
 };
@@ -40,7 +40,7 @@ function setup(){
 }
 function watch(){if(setup())return;requestAnimationFrame(watch)}
 watch();
-})();<\\/script>`;
+})();`+'</scr'+'ipt>';
   html=html.replace('</body>',patch+'</body>');
   document.open();document.write(html);document.close();
 })().catch(()=>location.href='./デモアプリ.html');
