@@ -21,18 +21,45 @@
 .external-screen .info-site-icon{position:absolute;left:14px;top:13px;width:24px;height:24px;border-radius:7px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--gold);font:11px var(--font-mono)}
 .external-screen .info-item{position:relative;padding-left:50px}
 .external-screen .info-title{padding-right:20px}
+.external-screen .matrix-quadrant{padding:16px}
+.external-screen .matrix-quadrant strong{font-size:13px}
 </style>`+'<scr'+'ipt>(function(){'+`
+const EXTRA=[
+ {name:'厚生労働省｜共育（トモイク）プロジェクト',category:'時間・仕事',type:'行政',desc:'仕事と育児の両立や男性の育児参加に関する情報。',url:'https://www.mhlw.go.jp/'},
+ {name:'パパninaru 育休シミュレーター',category:'時間・仕事',type:'育休',desc:'育児休業の取得期間や給付などをシミュレーションできる情報。',url:'https://192abc.com/460703'},
+ {name:'子育てタウン',category:'妊娠・育児',type:'地域情報',desc:'自治体の子育て情報をまとめて確認できるサービス。',url:'https://play.google.com/store/apps/details?id=jp.mamafre.mamafre&hl=ja'},
+ {name:'母子モ',category:'妊娠・育児',type:'母子手帳',desc:'妊娠・出産・子育てをサポートする母子手帳アプリ。',url:'https://www.mchh.jp/login'},
+ {name:'こども家庭庁｜公式YouTube',category:'妊娠・育児',type:'行政',desc:'こども・子育てに関する公式動画を発信。',url:'https://www.youtube.com/@KodomoKatei'},
+ {name:'こども家庭庁｜公式X',category:'妊娠・育児',type:'行政',desc:'こども・子育て政策などの最新情報を発信。',url:'https://x.com/KodomoKatei'},
+ {name:'こども家庭庁｜公式note',category:'妊娠・育児',type:'行政',desc:'こども・子育てに関する情報を発信。',url:'https://kodomo-gov.note.jp/'},
+ {name:'母子健康手帳情報支援サイト',category:'妊娠・育児',type:'行政',desc:'母子健康手帳に関する公式情報を確認できるサイト。',url:'https://mchbook.cfa.go.jp/'}
+];
+window.INFO_ITEMS=(window.INFO_ITEMS||[]).filter(x=>!EXTRA.some(e=>e.name===x.name)).concat(EXTRA);
 const TYPE={
-'Zaim':['アプリ','それ以外'],'マネーフォワード ME':['サイト','それ以外'],'TimeTree':['アプリ','それ以外'],'MILIZE「ミルイゼ」':['サイト','それ以外'],'Famm':['アプリ','それ以外'],'家族アルバム みてね':['アプリ','それ以外'],'BABY365':['アプリ','それ以外'],'トツキトオカ':['アプリ','それ以外'],'ぴよログ':['サイト','それ以外'],'ママリ':['サイト','それ以外'],'ルナルナ':['サイト','それ以外'],'こども家庭庁':['サイト','行政'],'厚生労働省':['サイト','行政'],'共育プロジェクト':['サイト','行政'],'こども家庭庁｜公式YouTube':['YouTube','行政'],'こども家庭庁｜公式X':['X','行政'],'こども家庭庁｜公式note':['サイト','行政'],'こども家庭庁｜公式サイト':['サイト','行政'],'母子健康手帳情報支援サイト':['サイト','行政'],'子育てタウン':['アプリ','それ以外'],'母子モ':['アプリ','それ以外']
+'Zaim':['アプリ','それ以外'],'マネーフォワード ME':['アプリ','それ以外'],'TimeTree':['アプリ','それ以外'],'MILIZE「ミルイゼ」':['サイト','それ以外'],'Famm':['アプリ','それ以外'],'家族アルバム みてね':['アプリ','それ以外'],'BABY365':['アプリ','それ以外'],'トツキトオカ':['アプリ','それ以外'],'ぴよログ':['アプリ','それ以外'],'ママリ':['アプリ','それ以外'],'ルナルナ':['サイト','それ以外'],'こども家庭庁':['サイト','行政'],'厚生労働省':['サイト','行政'],'共育プロジェクト':['サイト','行政'],'厚生労働省｜共育（トモイク）プロジェクト':['サイト','行政'],'パパninaru 育休シミュレーター':['サイト','それ以外'],'子育てタウン':['アプリ','それ以外'],'母子モ':['アプリ','それ以外'],'こども家庭庁｜公式YouTube':['YouTube','行政'],'こども家庭庁｜公式X':['X','行政'],'こども家庭庁｜公式note':['サイト','行政'],'こども家庭庁｜公式サイト':['サイト','行政'],'母子健康手帳情報支援サイト':['サイト','行政']
 };
 const ICON={YouTube:'▶',X:'𝕏',サイト:'↗',アプリ:'▣'};
 let typeFilter='すべて',ownerFilter='すべて';
+function setupMatrix(screen){
+ const grid=screen.querySelector('.matrix-grid');
+ if(!grid)return;
+ const groups={
+  money:{title:'お金',desc:'家計・将来のお金',items:['Zaim','マネーフォワード ME','MILIZE「ミルイゼ」']},
+  work:{title:'時間・仕事',desc:'予定・育休・働き方',items:['TimeTree','厚生労働省｜共育（トモイク）プロジェクト','パパninaru 育休シミュレーター']},
+  pregnancy:{title:'妊娠・育児',desc:'妊娠・子育ての情報',items:['トツキトオカ','ぴよログ','ママリ','ルナルナ','子育てタウン','母子モ']},
+  family:{title:'家族・記録',desc:'共有・思い出・成長記録',items:['Famm','家族アルバム みてね','BABY365','ぴよログ']}
+ };
+ const make=(g)=>'<div class="matrix-quadrant"><strong>'+g.title+'</strong><span>'+g.desc+'</span>'+g.items.map((name,i)=>'<div style="font-size:9px;color:var(--cream-dim);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+name+'</div>').join('')+'</div>';
+ grid.innerHTML=make(groups.money)+make(groups.work)+make(groups.pregnancy)+make(groups.family);
+}
 function setup(){
  const screen=document.querySelector('.external-screen'); if(!screen)return false;
  const tools=screen.querySelector('.info-tools'); const list=screen.querySelector('#infoList'); if(!tools||!list)return false;
+ const title=screen.querySelector('.title'); if(title)title.textContent='情報';
+ const lead=screen.querySelector('.lead'); if(lead)lead.textContent='育児や生活に役立つサービス・情報をまとめています。';
+ setupMatrix(screen);
  tools.innerHTML='<div class="info-filter-groups"><div class="info-filter-group"><span class="info-filter-label">種類</span>'+['すべて','YouTube','X','サイト','アプリ'].map(v=>'<button class="info-filter '+(typeFilter===v?'active':'')+'" data-type-filter="'+v+'">'+v+'</button>').join('')+'</div><div class="info-filter-group"><span class="info-filter-label">運営</span>'+['すべて','行政','それ以外'].map(v=>'<button class="info-filter '+(ownerFilter===v?'active':'')+'" data-owner-filter="'+v+'">'+v+'</button>').join('')+'</div></div>';
- const items=Array.isArray(window.INFO_ITEMS)?window.INFO_ITEMS:[];
- const filtered=items.filter(item=>{const m=TYPE[item.name]||['サイト','それ以外'];return (typeFilter==='すべて'||m[0]===typeFilter)&&(ownerFilter==='すべて'||m[1]===ownerFilter)});
+ const filtered=(window.INFO_ITEMS||[]).filter(item=>{const m=TYPE[item.name]||['サイト','それ以外'];return (typeFilter==='すべて'||m[0]===typeFilter)&&(ownerFilter==='すべて'||m[1]===ownerFilter)});
  list.innerHTML=filtered.map(item=>{const m=TYPE[item.name]||['サイト','それ以外'];return '<a class="info-item" href="'+item.url+'" target="_blank" rel="noopener noreferrer"><span class="info-site-icon" aria-hidden="true">'+(ICON[m[0]]||'↗')+'</span><span class="info-arrow">↗</span><div class="info-title">'+item.name+'</div><div class="info-desc">'+item.desc+'</div><div class="info-meta"><span class="info-tag">'+m[0]+'</span><span class="info-tag">'+m[1]+'</span></div></a>'}).join('');
  screen.querySelectorAll('[data-type-filter]').forEach(b=>b.onclick=()=>{typeFilter=b.dataset.typeFilter;setup()});
  screen.querySelectorAll('[data-owner-filter]').forEach(b=>b.onclick=()=>{ownerFilter=b.dataset.ownerFilter;setup()});
