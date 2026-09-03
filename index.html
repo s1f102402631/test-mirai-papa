@@ -3,78 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="http-equiv" content="refresh" content="0;url=./デモアプリ.html">
+<meta http-equiv="refresh" content="0;url=./デモアプリ.html">
 <title>みらいパパ ― 未来の育児シミュレーター</title>
-<style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-</style>
+<script>window.location.replace('./デモアプリ.html');</script>
 </head>
 <body>
-<script>
-fetch('./デモアプリ.html', {cache:'no-store'})
-.then(r=>r.text())
-.then(html=>{
-  html=html.replace('</style></head>', `
-/* final UI fixes */
-.content{scrollbar-width:none!important}
-.content::-webkit-scrollbar{display:none!important;width:0!important}
-.splash-art{height:130px!important;margin:2px 0 10px!important}
-.splash-screen .title{margin-top:0!important;margin-bottom:6px!important}
-.splash-screen .lead{margin-bottom:0!important}
-.external-screen>.eyebrow{display:none!important}
-.external-screen>.lead{display:none!important}
-.info-tools{margin:10px 0 8px!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important}
-.info-filters{overflow-x:auto!important;scrollbar-width:none!important}
-.info-filters::-webkit-scrollbar{display:none!important}
-.info-category-filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-.info-category-filters::-webkit-scrollbar{display:none}
-.info-select-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.info-select{width:100%;border:1px solid var(--border);border-radius:10px;background:var(--panel-light);color:var(--cream);padding:8px 9px;font:11px var(--font-body)}
-.info-filter-label{font:10px var(--font-mono);color:var(--gold-dim);margin-right:2px;white-space:nowrap}
-.info-list{margin-top:12px!important}
-.info-item{position:relative;padding-left:48px!important;min-height:42px}
-.info-site-icon{position:absolute;left:14px;top:14px;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--panel-soft);color:var(--gold);font:11px var(--font-mono);font-weight:700}
-.info-title{padding-right:22px}
-.matrix-wrap{margin-top:8px!important}
-</style></head>`);
-
-  const splashOld=`function renderSplash(content,footer){content.innerHTML=`;
-  const splashStart=html.indexOf(splashOld);
-  const openingStart=html.indexOf('function renderOpening', splashStart);
-  if(splashStart>=0&&openingStart>0){
-    const splashFn=`function renderSplash(content,footer){content.innerHTML=\`<div class="screen splash-screen"><div class="splash-art"><div class="moon"></div><div class="silhouette"><div class="figure"></div><div class="figure small"></div><div class="figure" style="height:48px"></div></div></div><h1 class="title">あなたの選択が、<br>未来の家族をつくる。</h1><p class="lead">将来の自分と家族の姿を、12の質問でシミュレーションしてみましょう。育児に関わるかどうかで、10年後の家族はどう変わる？</p></div>\`;footer.innerHTML=\`<button class="btn btn-primary" onclick="next()">はじめる</button><div class="quick-links icon-links"><button class="quick-link icon-link" onclick="go('survey')"><span class="quick-icon">📝</span><small>アンケート</small></button><button class="quick-link icon-link" onclick="go('externalInfo')"><span class="quick-icon external-box">↗</span><small>情報</small></button></div>}`;
-    html=html.slice(0,splashStart)+splashFn+html.slice(openingStart);
-  }
-
-  const infoStart=html.indexOf('function renderExternalInfo');
-  const infoEnd=html.indexOf("document.getElementById('brandHome')",infoStart);
-  if(infoStart>=0&&infoEnd>infoStart){
-    const infoFn=`function renderExternalInfo(content,footer){
-const cats=['すべて','お金','時間・仕事','妊娠・育児','家族・記録'];
-const typeOptions=['すべて','YouTube','X','サイト','アプリ'];
-const authorityOptions=['すべて','行政','その他'];
-if(typeof infoCatFilter==='undefined') infoCatFilter='すべて';
-if(typeof infoTypeFilter==='undefined') infoTypeFilter='すべて';
-if(typeof infoAuthorityFilter==='undefined') infoAuthorityFilter='すべて';
-const getType=item=>{if(item.name==='こども家庭庁')return 'サイト';if(item.name==='厚生労働省'||item.name==='共育プロジェクト'||item.name==='ルナルナ'||item.name==='ママリ')return 'サイト';return 'アプリ'};
-const getAuthority=item=>['こども家庭庁','厚生労働省','共育プロジェクト'].includes(item.name)?'行政':'その他';
-const getIcon=item=>{const t=getType(item);return t==='アプリ'?'APP':t==='YouTube'?'YT':t==='X'?'X':'WEB'};
-const selected=INFO_ITEMS.filter(item=>(infoCatFilter==='すべて'||item.category===infoCatFilter)&&(infoTypeFilter==='すべて'||getType(item)===infoTypeFilter)&&(infoAuthorityFilter==='すべて'||getAuthority(item)===infoAuthorityFilter));
-content.innerHTML=\`<div class="screen external-screen"><div class="eyebrow">External Information</div><h1 class="title" style="font-size:22px;">外部情報</h1><p class="lead">育児や生活に役立つサービス・情報を、テーマごとにまとめています。</p><div class="matrix-wrap" id="matrixWrap"><div class="matrix-canvas" id="matrixCanvas"><div class="matrix-grid"><div class="matrix-quadrant"><strong>お金</strong><span>家計・資産を整える</span></div><div class="matrix-quadrant"><strong>時間・仕事</strong><span>予定・働き方を整える</span></div><div class="matrix-quadrant"><strong>家族・記録</strong><span>家族の共有・記録</span></div><div class="matrix-quadrant"><strong>妊娠・育児</strong><span>妊娠・出産・子育て</span></div>${INFO_ITEMS.map((item,i)=>{const pos=[['24','26'],['72','24'],['28','76'],['72','74'],['43','82'],['82','56'],['56','24'],['63','68'],['86','30'],['38','45'],['60','42'],['76','46'],['68','84']][i];return \`<button class="matrix-point" data-label="${item.name}" style="left:${pos[0]}%;top:${pos[1]}%" aria-label="${item.name}"></button>\`}).join('')}</div></div><div class="matrix-axis-x">家族・生活とのつながり →</div><div class="matrix-axis-y">サポートの必要度</div><div class="matrix-controls"><button id="matrixMinus" aria-label="縮小">−</button><button id="matrixReset" aria-label="リセット">↺</button><button id="matrixPlus" aria-label="拡大">＋</button></div></div><div class="matrix-hint">指でドラッグして移動 ／ ピンチで拡大・縮小</div><div class="info-tools"><div class="info-category-filters"><span class="info-filter-label">テーマ</span>${cats.map(c=>\`<button class="info-filter ${infoCatFilter===c?'active':''}" data-cat-filter="${c}">${c}</button>\`).join('')}</div><div class="info-select-row"><select class="info-select" id="infoTypeFilter" aria-label="種類">${typeOptions.map(v=>\`<option ${infoTypeFilter===v?'selected':''}>${v}</option>\`).join('')}</select><select class="info-select" id="infoAuthorityFilter" aria-label="運営">${authorityOptions.map(v=>\`<option ${infoAuthorityFilter===v?'selected':''}>${v}</option>\`).join('')}</select></div></div><div class="info-section-title">INFORMATION LIST</div><div class="info-list" id="infoList"></div></div>\`;
-const wrap=document.getElementById('matrixWrap'),canvas=document.getElementById('matrixCanvas');
-const applyTransform=()=>{canvas.style.transform=\`translate(${matrixX}px,${matrixY}px) scale(${matrixScale})\`};
-const zoomAt=(delta,cx=wrap.clientWidth/2,cy=wrap.clientHeight/2)=>{const old=matrixScale;matrixScale=Math.max(.65,Math.min(2.3,matrixScale+delta));const ratio=matrixScale/old;matrixX=cx-(cx-matrixX)*ratio;matrixY=cy-(cy-matrixY)*ratio;applyTransform()};
-document.getElementById('matrixMinus').onclick=()=>zoomAt(-.15);document.getElementById('matrixPlus').onclick=()=>zoomAt(.15);document.getElementById('matrixReset').onclick=()=>{matrixScale=1;matrixX=0;matrixY=0;applyTransform()};
-wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};wrap.onpointermove=e=>{if(!matrixDrag)return;matrixX=matrixDrag.mx+e.clientX-matrixDrag.x;matrixY=matrixDrag.my+e.clientY-matrixDrag.y;applyTransform()};wrap.onpointerup=wrap.onpointercancel=()=>{matrixDrag=null;wrap.classList.remove('dragging')};let pinchStart=null;wrap.ontouchstart=e=>{if(e.touches.length===2){pinchStart={dist:Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY),scale:matrixScale}}};wrap.ontouchmove=e=>{if(e.touches.length===2&&pinchStart){e.preventDefault();const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);matrixScale=Math.max(.65,Math.min(2.3,pinchStart.scale*(dist/pinchStart.dist)));applyTransform()}};
-content.querySelectorAll('[data-cat-filter]').forEach(b=>b.onclick=()=>{infoCatFilter=b.dataset.catFilter;renderExternalInfo(content,footer)});document.getElementById('infoTypeFilter').onchange=e=>{infoTypeFilter=e.target.value;renderExternalInfo(content,footer)};document.getElementById('infoAuthorityFilter').onchange=e=>{infoAuthorityFilter=e.target.value;renderExternalInfo(content,footer)};
-content.querySelectorAll('.matrix-point').forEach((p,i)=>p.onclick=e=>{e.stopPropagation();window.open(INFO_ITEMS[i].url,'_blank','noopener,noreferrer')});
-const list=document.getElementById('infoList');list.innerHTML=selected.map(item=>\`<a class="info-item" href="${item.url}" target="_blank" rel="noopener noreferrer"><span class="info-site-icon">${getIcon(item)}</span><div class="info-title">${item.name}</div><div class="info-desc">${item.desc}</div><div class="info-meta"><span class="info-tag">${item.category}</span><span class="info-tag">${getType(item)}</span><span class="info-tag">${getAuthority(item)}</span></div></a>\`).join('');applyTransform()}
-`;
-    html=html.slice(0,infoStart)+infoFn+html.slice(infoEnd);
-  }
-  document.open();document.write(html);document.close();
-})
-.catch(()=>location.replace('./デモアプリ.html'));
-</script>
+<p>読み込み中…</p>
 </body>
 </html>
