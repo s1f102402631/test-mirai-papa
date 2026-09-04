@@ -31,12 +31,12 @@
 .external-screen .info-tools{display:block!important;margin:0 0 14px!important}
 .external-screen .info-filter-groups{display:flex;flex-direction:column;gap:8px;margin:0!important}
 .external-screen .info-filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.external-screen .info-filter-label{font:10px var(--font-mono);color:var(--cream-dim);min-width:28px}
 .external-screen .info-filter-group .info-filter{padding:6px 10px}
 .external-screen .info-site-icon{position:absolute;left:14px;top:13px;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden}
 .external-screen .info-site-icon img{width:24px;height:24px;object-fit:contain}
 .external-screen .info-item{position:relative;padding-left:54px!important}
-.external-screen .info-title{padding-right:20px}
+.external-screen .info-title{padding-right:0!important}
+.external-screen .info-arrow,.external-screen .info-meta{display:none!important}
 </style>`+'<scr'+'ipt>(function(){'+`
 const EXTRA=[
  {name:'厚生労働省｜共育（トモイク）プロジェクト',category:'時間・仕事',type:'行政',desc:'仕事と育児の両立や男性の育児参加に関する情報。',url:'https://tomoiku.mhlw.go.jp/'},
@@ -64,7 +64,7 @@ function iconUrl(item){
  try{const host=new URL(u).hostname;return 'https://www.google.com/s2/favicons?domain='+encodeURIComponent(host)+'&sz=64'}catch(e){return FALLBACK_ICON}
 }
 function itemByName(name){return (window.INFO_ITEMS||[]).find(x=>x.name===name)||{name,url:''}}
-function service(name){const item=itemByName(name);return '<div class="matrix-service"><img src="'+iconUrl(item)+'" alt=""><span class="matrix-service-name">'+name+'</span></div>}
+function service(name){const item=itemByName(name);return '<div class="matrix-service"><img src="'+iconUrl(item)+'" alt=""><span class="matrix-service-name">'+name+'</span></div>'}
 function setupMatrix(screen){
  const grid=screen.querySelector('.matrix-grid');
  if(!grid)return;
@@ -78,9 +78,9 @@ function setup(){
  const title=screen.querySelector('.title'); if(title)title.textContent='情報';
  const lead=screen.querySelector('.lead'); if(lead)lead.textContent='育児や生活に役立つサービス・情報をまとめています。';
  setupMatrix(screen);
- tools.innerHTML='<div class="info-filter-groups"><div class="info-filter-group"><span class="info-filter-label">種類</span>'+['すべて','YouTube','X','サイト','アプリ'].map(v=>'<button class="info-filter '+(typeFilter===v?'active':'')+'" data-type-filter="'+v+'">'+v+'</button>').join('')+'</div><div class="info-filter-group"><span class="info-filter-label">運営</span>'+['すべて','行政','それ以外'].map(v=>'<button class="info-filter '+(ownerFilter===v?'active':'')+'" data-owner-filter="'+v+'">'+v+'</button>').join('')+'</div></div>';
+ tools.innerHTML='<div class="info-filter-groups"><div class="info-filter-group">'+['すべて','YouTube','X','サイト','アプリ'].map(v=>'<button class="info-filter '+(typeFilter===v?'active':'')+'" data-type-filter="'+v+'">'+v+'</button>').join('')+'</div><div class="info-filter-group">'+['すべて','行政','それ以外'].map(v=>'<button class="info-filter '+(ownerFilter===v?'active':'')+'" data-owner-filter="'+v+'">'+v+'</button>').join('')+'</div></div>';
  const filtered=(window.INFO_ITEMS||[]).filter(item=>{const m=TYPE[item.name]||['サイト','それ以外'];return (typeFilter==='すべて'||m[0]===typeFilter)&&(ownerFilter==='すべて'||m[1]===ownerFilter)});
- list.innerHTML=filtered.map(item=>{const m=TYPE[item.name]||['サイト','それ以外'];return '<a class="info-item" href="'+item.url+'" target="_blank" rel="noopener noreferrer"><span class="info-site-icon"><img src="'+iconUrl(item)+'" alt=""></span><span class="info-arrow">↗</span><div class="info-title">'+item.name+'</div><div class="info-desc">'+item.desc+'</div><div class="info-meta"><span class="info-tag">'+m[0]+'</span><span class="info-tag">'+m[1]+'</span></div></a>'}).join('');
+ list.innerHTML=filtered.map(item=>{return '<a class="info-item" href="'+item.url+'" target="_blank" rel="noopener noreferrer"><span class="info-site-icon"><img src="'+iconUrl(item)+'" alt="" onerror="this.onerror=null;this.src=\''+FALLBACK_ICON+'\'\"></span><div class="info-title">'+item.name+'</div><div class="info-desc">'+item.desc+'</div></a>'}).join('');
  screen.querySelectorAll('[data-type-filter]').forEach(b=>b.onclick=()=>{typeFilter=b.dataset.typeFilter;setup()});
  screen.querySelectorAll('[data-owner-filter]').forEach(b=>b.onclick=()=>{ownerFilter=b.dataset.ownerFilter;setup()});
  return true;
