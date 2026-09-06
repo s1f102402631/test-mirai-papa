@@ -1,0 +1,44 @@
+name: Fix info link confirmation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-info-links.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch info links
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = "return it?'<div class=\\\"matrix-service\\\">'+iconHtml(it)+'<span class=\\\"matrix-service-name\\\">'+n+'</span></div>':''"
+          new = "return it?'<div class=\\\"matrix-service\\\" data-info-url=\\\"'+it.url+'\\\" data-info-name=\\\"'+n.replace('\\\"','&quot;')+'\\\">'+iconHtml(it)+'<span class=\\\"matrix-service-name\\\">'+n+'</span></div>':''"
+          if old not in s:
+              raise SystemExit('matrix render pattern not found')
+          s = s.replace(old, new, 1)
+
+          old2 = "list.innerHTML=filtered.map(item=>'<a class=\\\"info-item\\\" href=\\\"'+item.url+'\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\">'+listIconHtml(item)+'<div class=\\\"info-title\\\">'+item.name+'</div><div class=\\\"info-desc\\\">'+item.desc+'</div></a>').join('');"
+          new2 = old2 + "\nconst openInfoLink=(url,name)=>{if(window.confirm(name+'を開きますか？'))window.open(url,'_blank','noopener,noreferrer')};matrixWrap.querySelectorAll('[data-info-url]').forEach(el=>el.addEventListener('click',()=>openInfoLink(el.dataset.infoUrl,el.dataset.infoName||'このページ')));list.querySelectorAll('.info-item').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openInfoLink(el.href,el.querySelector('.info-title')?.textContent?.trim()||'このページ')}));"
+          if old2 not in s:
+              raise SystemExit('list render pattern not found')
+          s = s.replace(old2, new2, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit changes and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git rm .github/workflows/fix-info-links.yml
+          git commit -m 'fix: confirm before opening info links [info-link-fix]'
+          git push
