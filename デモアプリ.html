@@ -40,7 +40,7 @@
 .quick-link .quick-label,.quick-link .label{font-size:10.5px!important;white-space:nowrap!important;word-break:keep-all!important}
 /* direct-ui-fix-20260906 */
 .quick-link{font-size:10.5px!important;white-space:nowrap!important;word-break:keep-all!important}
-.quick-link small{font-size:10.5px!important;white-space:nowrap!important}</head>
+.quick-link small{font-size:10.5px!important;white-space:nowrap!important}</style></head>
 <body><div class="stars"></div><div class="phone"><div class="topbar"><button class="brand" id="brandHome" aria-label="最初の画面に戻る">みらいパパ</button><div class="dots" id="dots"></div><button class="help-btn" id="helpBtn" aria-label="ヘルプ">?</button></div><div class="content" id="content"></div><div class="footer" id="footer"></div></div><div class="modal-overlay" id="modalOverlay"><div class="modal-box"><h2>このアプリについて</h2><p>「みらいパパ」は、将来父親になるかもしれないあなたが、育児への向き合い方によって変わる10年後の家族の姿を疑似体験できるシミュレーターです。12個の質問に答えると、あなたの今の意識タイプと、2つの未来（育児に関わらなかった場合／積極的に関わった場合）が表示されます。</p><p>結果に正解・不正解はありません。未来は、これからのあなたの選択次第で変えられます。</p><button class="btn btn-primary" id="modalClose">閉じる</button></div></div>
 <script>
 const ICONS={heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.5-4.6-9.8-9.4C.8 7.7 2.4 4.5 5.6 4c2-.3 3.7.6 4.9 2.1L12 7.6l1.5-1.5c1.2-1.5 2.9-2.4 4.9-2.1 3.2.5 4.8 3.7 3.4 7.1-2.3 4.8-9.8 9.4-9.8 9.4z"/></svg>',child:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="3.2"/><path d="M6 21v-3.5C6 14.5 8.5 13 12 13s6 1.5 6 4.5V21"/></svg>',clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5.7 1.5 1.5z"/></svg>'};
@@ -71,5 +71,8 @@ document.getElementById('brandHome').addEventListener('click',restart);document.
 </script>
 <script>/* direct-info-confirmation */
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.info-item');if(!a)return;if(!window.confirm(((a.querySelector('.info-title')||a).textContent||'この情報').trim()+'\n\n外部サイトを開きますか？')){e.preventDefault();e.stopImmediatePropagation();}},true);
-</script></body>
-</html></style>
+</script><script>/* direct-info-confirmation-20260906 */
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.info-item');if(!a)return;if(!window.confirm(((a.querySelector('.info-title')||a).textContent||'この情報').trim()+'\n\n外部サイトを開きますか？')){e.preventDefault();e.stopImmediatePropagation();}},true);
+</script>
+</body>
+</html>
