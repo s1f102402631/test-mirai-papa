@@ -11,18 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch map external confirmation
+      - name: Patch map point click handling
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('デモアプリ.html')
           s=p.read_text(encoding='utf-8')
-          old="function show(url,name){if(!url)return;pendingUrl=url;document.getElementById('externalConfirmName').textContent=name||'外部サイト';overlay.style.display='flex'}"
-          new=old+"\n    window.__showExternalConfirm=show;"
-          if "window.__showExternalConfirm=show;" not in s:
-              if old not in s:
-                  raise SystemExit('confirmation function not found')
-              s=s.replace(old,new,1)
+          old="wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
+          new="wrap.onpointerdown=e=>{if(e.target.closest&&e.target.closest('.matrix-point, .matrix-controls'))return;wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
+          if old not in s:
+              raise SystemExit('pointerdown handler not found')
+          s=s.replace(old,new,1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit and push
@@ -31,5 +30,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add 'デモアプリ.html'
           git diff --cached --quiet && exit 0
-          git commit -m 'Expose external confirmation handler for map'
+          git commit -m 'Fix clickable map points'
           git push
