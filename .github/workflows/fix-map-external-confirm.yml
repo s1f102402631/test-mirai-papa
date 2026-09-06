@@ -15,14 +15,21 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('デモアプリ.html')
-          s=p.read_text(encoding='utf-8')
-          old="wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
-          new="wrap.onpointerdown=e=>{if(e.target.closest&&e.target.closest('.matrix-point, .matrix-controls'))return;wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
-          if old not in s:
-              raise SystemExit('pointerdown handler not found')
-          s=s.replace(old,new,1)
-          p.write_text(s,encoding='utf-8')
+          p = Path('デモアプリ.html')
+          s = p.read_text(encoding='utf-8')
+          old = "wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
+          new = "wrap.onpointerdown=e=>{if(e.target.closest&&e.target.closest('.matrix-point, .matrix-controls'))return;wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
+          if old in s:
+              s = s.replace(old, new, 1)
+          elif new not in s:
+              raise SystemExit('map pointer handler not found')
+          marker = "window.__showExternalConfirm=show;"
+          inject = """\n    document.addEventListener('click',function(e){\n      var p=e.target.closest&&e.target.closest('.matrix-point');\n      if(!p)return;\n      e.preventDefault();\n      e.stopImmediatePropagation();\n      var points=document.querySelectorAll('.matrix-point');\n      var idx=Array.prototype.indexOf.call(points,p);\n      var item=(typeof INFO_ITEMS!=='undefined'&&INFO_ITEMS[idx])?INFO_ITEMS[idx]:null;\n      if(item&&window.__showExternalConfirm)window.__showExternalConfirm(item.url,item.name);\n    },true);\n"""
+          if "closest('.matrix-point')" not in s:
+              if marker not in s:
+                  raise SystemExit('confirmation handler marker not found')
+              s = s.replace(marker, marker + inject, 1)
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Commit and push
         run: |
