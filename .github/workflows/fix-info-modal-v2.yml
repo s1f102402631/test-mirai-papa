@@ -1,0 +1,41 @@
+name: Fix info modal v2
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: !contains(github.event.head_commit.message, '[info-modal-v2]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch info confirmation UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('デモアプリ.html')
+          s=p.read_text(encoding='utf-8')
+          # Remove old native-confirm scripts, including duplicates.
+          s=re.sub(r'\s*<script>/\* direct-info-confirmation(?:-20260906)? \*/.*?</script>', '', s, flags=re.S)
+          # Remove any prior custom modal block if a previous attempt partially inserted it.
+          s=re.sub(r'\s*/\* info-open-modal-20260906 \*/.*?(?=</style>)', '', s, flags=re.S)
+          s=re.sub(r'\s*<div class="info-open-overlay" id="infoOpenOverlay".*?</div></div>\s*', '', s, flags=re.S)
+          s=re.sub(r'\s*<script>/\* info-open-modal-logic-20260906 \*/.*?</script>\s*', '', s, flags=re.S)
+          css='''\n/* info-open-modal-v2 */\n.info-open-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,12,20,.68);backdrop-filter:blur(4px)}\n.info-open-overlay.show{display:flex}\n.info-open-box{width:min(310px,calc(100vw - 40px));padding:18px;border:1px solid var(--border);border-radius:16px;background:var(--panel);box-shadow:0 18px 50px rgba(0,0,0,.35);text-align:center}\n.info-open-label{font:10px var(--font-mono);letter-spacing:.08em;color:var(--gold-dim);margin-bottom:7px}\n.info-open-name{font-size:15px;font-weight:700;color:var(--cream);margin-bottom:6px}\n.info-open-text{font-size:11px;line-height:1.6;color:var(--cream-dim);margin-bottom:14px}\n.info-open-actions{display:flex;gap:7px;justify-content:center}\n.info-open-actions button{flex:1;height:33px;border-radius:9px;font:11px var(--font-body);cursor:pointer}\n.info-open-close{border:1px solid var(--border);background:transparent;color:var(--cream-dim)}\n.info-open-go{border:1px solid var(--gold);background:rgba(232,184,109,.12);color:var(--gold)}\n'''
+          if 'info-open-modal-v2' not in s:
+              s=s.replace('</style>',css+'</style>',1)
+          html='''\n<div class="info-open-overlay" id="infoOpenOverlay" aria-hidden="true"><div class="info-open-box" role="dialog" aria-modal="true"><div class="info-open-label">EXTERNAL SITE</div><div class="info-open-name" id="infoOpenName"></div><div class="info-open-text">外部サイトを開きます。<br>サイトを移動してもよろしいですか？</div><div class="info-open-actions"><button class="info-open-close" id="infoOpenClose">閉じる</button><button class="info-open-go" id="infoOpenGo">開く</button></div></div></div>\n'''
+          if 'id="infoOpenOverlay"' not in s:
+              s=s.replace('</body>',html+'</body>',1)
+          js='''\n<script>/* info-open-modal-logic-v2 */\n(function(){\n  var overlay=document.getElementById('infoOpenOverlay'),nameEl=document.getElementById('infoOpenName'),go=document.getElementById('infoOpenGo'),close=document.getElementById('infoOpenClose'),pending=null;\n  if(!overlay)return;\n  var nativeOpen=window.open.bind(window);\n  function hide(){overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');pending=null}\n  function show(url,name){if(!url)return;pending={url:url,name:name||'外部サイト'};nameEl.textContent=pending.name;overlay.classList.add('show');overlay.setAttribute('aria-hidden','false')}\n  document.addEventListener('click',function(e){\n    var a=e.target.closest&&e.target.closest('a.info-item');\n    if(!a)return;\n    e.preventDefault();e.stopImmediatePropagation();\n    show(a.getAttribute('href'),((a.querySelector('.info-title')||a).textContent||'外部サイト').trim());\n  },true);\n  window.open=function(url,target,features){show(url,'外部サイト');return null};\n  close.addEventListener('click',hide);\n  go.addEventListener('click',function(){if(pending){var p=pending;hide();nativeOpen(p.url,'_blank','noopener,noreferrer')}});\n  overlay.addEventListener('click',function(e){if(e.target===overlay)hide()});\n  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&overlay.classList.contains('show'))hide()});\n})();\n</script>\n'''
+          if 'info-open-modal-logic-v2' not in s:
+              s=s.replace('</body>',js+'</body>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add 'デモアプリ.html'
+          git commit -m '情報マップと情報リストの確認UIを統一 [info-modal-v2]'
+          git push
