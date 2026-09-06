@@ -13,45 +13,84 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@v4
-      - name: Repair generated index.html
+      - name: Repair and update UI
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
+          # Repair the existing generated index bootstrap if needed.
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           original = s
-
-          # The previous patch accidentally generated a JavaScript string
-          # containing a literal newline after html.replace('. That makes
-          # the whole bootstrap script fail with SyntaxError.
           pattern = r'''  html\.replace\('\n<style id="final-info-layout-fix">.*?\n</body>',patch\+'\</body>'\);'''
           replacement = "  html=html.replace('</body>',patch+'</body>');"
           s, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
-
           if n == 0:
-              # Also handle the exact malformed form if escaping differs.
               start = "  html=html.replace('\\n<style id=\"final-info-layout-fix\">"
               if start in s:
                   a = s.index(start)
                   b = s.index("  document.open();", a)
                   s = s[:a] + replacement + "\n" + s[b:]
-
           if s != original:
               p.write_text(s, encoding='utf-8')
-              print('Repaired index.html')
+
+          # Make the home-screen labels compact and require confirmation
+          # before opening an external information site.
+          p = Path('デモアプリ.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* home-label-and-info-confirmation-v1 */'
+          if marker not in s:
+              patch = r'''<style>
+/* home-label-and-info-confirmation-v1 */
+.quick-icon .quick-label,
+.quick-icon .label,
+.quick-card .quick-label,
+.quick-card .label{font-size:18px!important;line-height:1.15!important;white-space:nowrap!important;word-break:keep-all!important}
+</style>
+<script>
+(function(){
+  function setup(){
+    document.querySelectorAll('.info-item').forEach(function(a){
+      if(a.dataset.confirmPatched==='1') return;
+      a.dataset.confirmPatched='1';
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var name=(a.querySelector('.info-title')||a).textContent.trim();
+        if(window.confirm(name+'\n\n外部サイトを開きますか？')){
+          window.open(a.href,'_blank','noopener,noreferrer');
+        }
+      },true);
+    });
+    document.querySelectorAll('button,a,.quick-icon,.quick-card').forEach(function(el){
+      var t=(el.textContent||'').trim();
+      if(t==='アンケート'||t==='アンケートに答える'||t.includes('アンケート')){
+        el.style.fontSize='18px';
+        el.style.lineHeight='1.15';
+        el.style.whiteSpace='nowrap';
+        el.style.wordBreak='keep-all';
+      }
+    });
+  }
+  setup();
+  new MutationObserver(setup).observe(document.body,{childList:true,subtree:true});
+})();
+</script>'''
+              s = s.replace('</body>', patch+'\n</body>')
+              p.write_text(s, encoding='utf-8')
+              print('Updated home labels and info confirmation')
           else:
-              print('No repair needed')
+              print('UI patch already present')
           PY
-      - name: Commit repair
+      - name: Commit UI changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
+          git add index.html 'デモアプリ.html'
           if git diff --cached --quiet; then
             echo 'No changes to commit'
           else
-            git commit -m '読み込み停止のSyntaxErrorを修正'
+            git commit -m 'ホーム表示と情報リンクの操作を調整'
             git push
           fi
