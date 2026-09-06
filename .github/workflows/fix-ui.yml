@@ -1,0 +1,67 @@
+name: Apply UI fixes
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-ui:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply requested UI fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('デモアプリ.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          # 結果画面のボタンを「終了」に変更
+          s = s.replace(
+              '<button class="btn btn-secondary" onclick="restart()">もう一度診断する</button>',
+              '<button class="btn btn-secondary" onclick="restart()">終了</button>'
+          )
+
+          # 情報リストに各サービスのファビコンを追加
+          old = '<span class="info-arrow">↗</span><div class="info-title">${item.name}</div>'
+          new = '<span class="info-site-icon"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(item.url).hostname)}&sz=64" alt=""></span><div class="info-title">${item.name}</div>'
+          s = s.replace(old, new)
+
+          # 情報画面の戻るボタンをリストの下に追加
+          marker = "list.innerHTML=filtered.map(item=>`<a class=\"info-item\" href=\"${item.url}\" target=\"_blank\" rel=\"noopener noreferrer\"><span class=\"info-site-icon\"><img src=\"https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(item.url).hostname)}&sz=64\" alt=\"\"></span><div class=\"info-title\">${item.name}</div>"
+          if marker in s and 'class="info-back-direct"' not in s:
+              # Insert before the final applyTransform() of renderExternalInfo.
+              pos = s.find(marker)
+              end = s.find("}).join('');applyTransform()}", pos)
+              if end != -1:
+                  end += len("}).join('');")
+                  s = s[:end] + "const infoBack=document.createElement('button');infoBack.className='info-back-direct';infoBack.type='button';infoBack.textContent='←';infoBack.setAttribute('aria-label','戻る');infoBack.onclick=()=>restart();list.insertAdjacentElement('afterend',infoBack);" + s[end:]
+
+          # 戻るボタンとアイコンのCSS
+          css = '''\n.info-site-icon{position:absolute;left:14px;top:13px;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:#fff;overflow:hidden}.info-site-icon img{width:24px;height:24px;object-fit:contain}.info-item{position:relative;padding-left:54px!important}.info-back-direct{display:flex;align-items:center;justify-content:flex-start;width:100%;margin:18px 0 2px;padding:0;border:0;background:transparent;color:var(--cream-dim);font:14px var(--font-mono);cursor:pointer;text-align:left}.info-back-direct:hover{color:var(--gold)}\n'''
+          if '.info-back-direct{' not in s:
+              s = s.replace('</style>', css + '</style>', 1)
+
+          if s != original:
+              p.write_text(s, encoding='utf-8')
+          else:
+              print('No source changes needed')
+          PY
+      - name: Commit source changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'デモアプリ.html'
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m '情報画面と診断終了ボタンを直接修正'
+            git push
+          fi
