@@ -11,31 +11,59 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch map point click handling
+      - name: Patch map interactions
+        shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('デモアプリ.html')
           s = p.read_text(encoding='utf-8')
-          old = "wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
-          new = "wrap.onpointerdown=e=>{if(e.target.closest&&e.target.closest('.matrix-point, .matrix-controls'))return;wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};"
-          if old in s:
-              s = s.replace(old, new, 1)
-          elif new not in s:
-              raise SystemExit('map pointer handler not found')
-          marker = "window.__showExternalConfirm=show;"
-          inject = """\n    document.addEventListener('click',function(e){\n      var p=e.target.closest&&e.target.closest('.matrix-point');\n      if(!p)return;\n      e.preventDefault();\n      e.stopImmediatePropagation();\n      var points=document.querySelectorAll('.matrix-point');\n      var idx=Array.prototype.indexOf.call(points,p);\n      var item=(typeof INFO_ITEMS!=='undefined'&&INFO_ITEMS[idx])?INFO_ITEMS[idx]:null;\n      if(item&&window.__showExternalConfirm)window.__showExternalConfirm(item.url,item.name);\n    },true);\n"""
-          if "closest('.matrix-point')" not in s:
+
+          # 1. Prevent the map drag handler from swallowing point presses.
+          s = s.replace(
+              "wrap.onpointerdown=e=>{wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};",
+              "wrap.onpointerdown=e=>{if(e.target.closest&&e.target.closest('.matrix-point,.matrix-controls'))return;wrap.classList.add('dragging');wrap.setPointerCapture(e.pointerId);matrixDrag={x:e.clientX,y:e.clientY,mx:matrixX,my:matrixY}};",
+              1
+          )
+
+          # 2. Make the existing confirmation dialog callable from the map.
+          if 'window.__showExternalConfirm=show;' not in s:
+              marker = "function show(url,name){if(!url)return;pendingUrl=url;document.getElementById('externalConfirmName').textContent=name||'外部サイト';overlay.style.display='flex'}"
+              if marker in s:
+                  s = s.replace(marker, marker + "\n    window.__showExternalConfirm=show;", 1)
+
+          # 3. Delegate clicks from dynamically-rendered map points.
+          if "MAP-EXTERNAL-CONFIRM-FIX" not in s:
+              marker = "window.__showExternalConfirm=show;"
               if marker not in s:
-                  raise SystemExit('confirmation handler marker not found')
+                  raise SystemExit('external confirmation function marker not found')
+              inject = '''
+    /* MAP-EXTERNAL-CONFIRM-FIX */
+    document.addEventListener('click',function(e){
+      var point=e.target.closest&&e.target.closest('.matrix-point');
+      if(!point)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var points=document.querySelectorAll('.matrix-point');
+      var index=Array.prototype.indexOf.call(points,point);
+      var item=(typeof INFO_ITEMS!=='undefined')?INFO_ITEMS[index]:null;
+      if(item&&window.__showExternalConfirm){
+        window.__showExternalConfirm(item.url,item.name);
+      }
+    },true);
+    '''
               s = s.replace(marker, marker + inject, 1)
+
           p.write_text(s, encoding='utf-8')
           PY
-      - name: Commit and push
+      - name: Commit and push HTML fix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add 'デモアプリ.html'
-          git diff --cached --quiet && exit 0
-          git commit -m 'Fix clickable map points'
+          if git diff --cached --quiet; then
+            echo 'No HTML changes needed.'
+            exit 0
+          fi
+          git commit -m 'Fix clickable information map points'
           git push
