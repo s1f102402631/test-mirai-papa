@@ -1,0 +1,61 @@
+name: temporary UI fix
+on:
+  push:
+    paths-ignore:
+      - .github/workflows/temporary-ui-fix.yml
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[ui-fix]') }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply home visual and label sizing
+        run: |
+          cat >> style.css <<'EOF'
+
+/* temporary-home-ui-fix */
+.splash-art{
+  height:200px!important;
+  margin:6px 0 22px!important;
+  border-radius:20px!important;
+  overflow:hidden!important;
+  position:relative!important;
+  background:radial-gradient(circle at 78% 28%,rgba(255,245,211,.96) 0 22px,rgba(232,184,109,.32) 23px,transparent 48px),linear-gradient(180deg,#33466f 0%,#273653 48%,#1a2438 100%)!important;
+}
+.splash-art::before{
+  content:''!important;
+  position:absolute!important;
+  left:-8%!important;
+  right:-8%!important;
+  bottom:-34px!important;
+  height:105px!important;
+  background:#101827!important;
+  border-radius:50% 50% 0 0 / 75% 75% 0 0!important;
+  transform:rotate(-2deg)!important;
+}
+.splash-art::after{
+  content:''!important;
+  position:absolute!important;
+  left:-10%!important;
+  right:-10%!important;
+  bottom:-58px!important;
+  height:105px!important;
+  background:#172238!important;
+  border-radius:50% 50% 0 0 / 80% 80% 0 0!important;
+  transform:rotate(3deg)!important;
+}
+.splash-art .silhouette{display:none!important}
+.splash-art .moon{width:46px!important;height:46px!important;top:20px!important;right:22px!important;box-shadow:0 0 34px rgba(232,184,109,.45)!important;z-index:2!important}
+.quick-link{font-size:10.5px!important;white-space:nowrap!important;gap:4px!important;padding-left:4px!important;padding-right:4px!important}
+.quick-link .emoji{font-size:13px!important}
+EOF
+      - name: Commit and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add style.css
+          git rm .github/workflows/temporary-ui-fix.yml
+          git commit -m 'fix home visual and quick link sizing [ui-fix]'
+          git push
