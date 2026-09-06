@@ -106,10 +106,23 @@ function patchResultButton(){
    }
  });
 }
-function watch(){setup();patchResultButton();requestAnimationFrame(watch)}
+\nfunction finalInfoLayoutFix(){\n const screen=document.querySelector('.external-screen');\n if(!screen)return;\n const tools=screen.querySelector('.info-tools');\n const matrix=screen.querySelector('.matrix-wrap');\n const list=screen.querySelector('#infoList');\n if(!tools||!matrix||!list)return;\n // Put the type/owner filters BELOW the map and directly ABOVE the list.\n tools.innerHTML='<div class="info-filter-groups"><div class="info-filter-group">'+['すべて','YouTube','X','サイト','アプリ'].map(v=>'<button class="info-filter '+(typeFilter===v?'active':'')+'" data-type-filter="'+v+'">'+v+'</button>').join('')+'</div><div class="info-filter-group">'+['すべて','行政','それ以外'].map(v=>'<button class="info-filter '+(ownerFilter===v?'active':'')+'" data-owner-filter="'+v+'">'+v+'</button>').join('')+'</div></div>';\n matrix.insertAdjacentElement('afterend',tools);\n const oldBack=screen.querySelector('.info-back-final');\n if(oldBack)oldBack.remove();\n const back=document.createElement('button');\n back.className='info-back-final';\n back.type='button';\n back.textContent='←';\n back.setAttribute('aria-label','戻る');\n back.onclick=()=>{const brand=document.getElementById('brandHome');if(brand)brand.click();else if(typeof window.showHome==='function')window.showHome()};\n list.insertAdjacentElement('afterend',back);\n screen.querySelectorAll('[data-type-filter]').forEach(b=>b.onclick=()=>{typeFilter=b.dataset.typeFilter;setup()});\n screen.querySelectorAll('[data-owner-filter]').forEach(b=>b.onclick=()=>{ownerFilter=b.dataset.ownerFilter;setup()});\n}\nfunction watch(){setup();patchResultButton();finalInfoLayoutFix();requestAnimationFrame(watch)}
 watch();
 })();`+'</scr'+'ipt>';
-  html=html.replace('</body>',patch+'</body>');
+  html=html.replace('
+<style id="final-info-layout-fix">
+.external-screen{position:relative!important}
+.external-screen .info-tools{display:block!important;margin:14px 0 10px!important}
+.external-screen .info-tools .info-filter-groups{display:flex!important;flex-direction:column!important;gap:8px!important}
+.external-screen .info-filter-group{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important}
+.external-screen .info-site-icon{position:absolute!important;left:14px!important;top:13px!important;width:30px!important;height:30px!important;border-radius:8px!important;border:1px solid var(--border)!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;overflow:hidden!important}
+.external-screen .info-site-icon img{width:24px!important;height:24px!important;object-fit:contain!important}
+.external-screen .info-item{position:relative!important;padding-left:54px!important}
+.external-screen .info-arrow,.external-screen .info-meta{display:none!important}
+.external-screen .info-back-final{display:flex!important;align-items:center!important;justify-content:flex-start!important;width:100%!important;margin:18px 0 4px!important;padding:0!important;border:0!important;background:transparent!important;color:var(--cream-dim)!important;font:14px var(--font-mono)!important;cursor:pointer!important;text-align:left!important}
+.external-screen .info-back-final:hover{color:var(--gold)!important}
+</style>
+</body>',patch+'</body>');
   document.open();document.write(html);document.close();
 })().catch(()=>location.href='./デモアプリ.html');
 </script>
