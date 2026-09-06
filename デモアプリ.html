@@ -83,6 +83,17 @@ document.getElementById('brandHome').addEventListener('click',restart);document.
   function close(){pendingUrl=null;overlay.style.display='none'}
   function show(url,name){if(!url)return;pendingUrl=url;document.getElementById('externalConfirmName').textContent=name||'外部サイト';overlay.style.display='flex'}
     window.__showExternalConfirm=show;
+    document.addEventListener('click',function(e){
+      var p=e.target.closest&&e.target.closest('.matrix-point');
+      if(!p)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var points=document.querySelectorAll('.matrix-point');
+      var idx=Array.prototype.indexOf.call(points,p);
+      var item=(typeof INFO_ITEMS!=='undefined'&&INFO_ITEMS[idx])?INFO_ITEMS[idx]:null;
+      if(item&&window.__showExternalConfirm)window.__showExternalConfirm(item.url,item.name);
+    },true);
+
   document.getElementById('externalConfirmCancel').addEventListener('click',close);
   document.getElementById('externalConfirmOpen').addEventListener('click',function(){var url=pendingUrl;close();if(url)nativeOpen(url,'_blank','noopener,noreferrer')});
   overlay.addEventListener('click',function(e){if(e.target===overlay)close()});
