@@ -13,64 +13,38 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@v4
-      - name: Apply requested UI layout
+      - name: Repair generated index.html
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           original = s
 
-          css = '''
-<style id="final-info-layout-fix">
-.external-screen{position:relative!important}
-.external-screen .info-tools{display:block!important;margin:14px 0 10px!important}
-.external-screen .info-tools .info-filter-groups{display:flex!important;flex-direction:column!important;gap:8px!important}
-.external-screen .info-filter-group{display:flex!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important}
-.external-screen .info-site-icon{position:absolute!important;left:14px!important;top:13px!important;width:30px!important;height:30px!important;border-radius:8px!important;border:1px solid var(--border)!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;overflow:hidden!important}
-.external-screen .info-site-icon img{width:24px!important;height:24px!important;object-fit:contain!important}
-.external-screen .info-item{position:relative!important;padding-left:54px!important}
-.external-screen .info-arrow,.external-screen .info-meta{display:none!important}
-.external-screen .info-back-final{display:flex!important;align-items:center!important;justify-content:flex-start!important;width:100%!important;margin:18px 0 4px!important;padding:0!important;border:0!important;background:transparent!important;color:var(--cream-dim)!important;font:14px var(--font-mono)!important;cursor:pointer!important;text-align:left!important}
-.external-screen .info-back-final:hover{color:var(--gold)!important}
-</style>
-'''
-          if 'id="final-info-layout-fix"' not in s:
-              s = s.replace('</body>', css + '</body>', 1)
+          # The previous patch accidentally generated a JavaScript string
+          # containing a literal newline after html.replace('. That makes
+          # the whole bootstrap script fail with SyntaxError.
+          pattern = r'''  html\.replace\('\n<style id="final-info-layout-fix">.*?\n</body>',patch\+'\</body>'\);'''
+          replacement = "  html=html.replace('</body>',patch+'</body>');"
+          s, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
 
-          inject = '''
-function finalInfoLayoutFix(){
- const screen=document.querySelector('.external-screen');
- if(!screen)return;
- const tools=screen.querySelector('.info-tools');
- const matrix=screen.querySelector('.matrix-wrap');
- const list=screen.querySelector('#infoList');
- if(!tools||!matrix||!list)return;
- tools.innerHTML='<div class="info-filter-groups"><div class="info-filter-group">'+['すべて','YouTube','X','サイト','アプリ'].map(v=>'<button class="info-filter '+(typeFilter===v?'active':'')+'" data-type-filter="'+v+'">'+v+'</button>').join('')+'</div><div class="info-filter-group">'+['すべて','行政','それ以外'].map(v=>'<button class="info-filter '+(ownerFilter===v?'active':'')+'" data-owner-filter="'+v+'">'+v+'</button>').join('')+'</div></div>';
- matrix.insertAdjacentElement('afterend',tools);
- const oldBack=screen.querySelector('.info-back-final');
- if(oldBack)oldBack.remove();
- const back=document.createElement('button');
- back.className='info-back-final';
- back.type='button';
- back.textContent='←';
- back.setAttribute('aria-label','戻る');
- back.onclick=()=>{const brand=document.getElementById('brandHome');if(brand)brand.click();else if(typeof window.showHome==='function')window.showHome()};
- list.insertAdjacentElement('afterend',back);
- screen.querySelectorAll('[data-type-filter]').forEach(b=>b.onclick=()=>{typeFilter=b.dataset.typeFilter;setup()});
- screen.querySelectorAll('[data-owner-filter]').forEach(b=>b.onclick=()=>{ownerFilter=b.dataset.ownerFilter;setup()});
-}
-'''
-          if 'function finalInfoLayoutFix()' not in s:
-              s = s.replace('function watch(){setup();patchResultButton();requestAnimationFrame(watch)}', inject + 'function watch(){setup();patchResultButton();finalInfoLayoutFix();requestAnimationFrame(watch)}')
+          if n == 0:
+              # Also handle the exact malformed form if escaping differs.
+              start = "  html=html.replace('\\n<style id=\"final-info-layout-fix\">"
+              if start in s:
+                  a = s.index(start)
+                  b = s.index("  document.open();", a)
+                  s = s[:a] + replacement + "\n" + s[b:]
 
-          if s == original:
-              print('No changes needed')
-          else:
+          if s != original:
               p.write_text(s, encoding='utf-8')
+              print('Repaired index.html')
+          else:
+              print('No repair needed')
           PY
-      - name: Commit layout changes
+      - name: Commit repair
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -78,6 +52,6 @@ function finalInfoLayoutFix(){
           if git diff --cached --quiet; then
             echo 'No changes to commit'
           else
-            git commit -m '情報画面のフィルター位置と戻るボタンを修正'
+            git commit -m '読み込み停止のSyntaxErrorを修正'
             git push
           fi
