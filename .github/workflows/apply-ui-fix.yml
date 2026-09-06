@@ -1,0 +1,52 @@
+name: Apply UI fix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch app
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('デモアプリ.html')
+          s = p.read_text(encoding='utf-8')
+
+          css = '''\n/* home-label-and-info-confirmation-v2 */\n.quick-link{font-size:10.5px!important;white-space:nowrap!important;word-break:keep-all!important}\n.quick-link .quick-label,.quick-link .label{font-size:10.5px!important;white-space:nowrap!important;word-break:keep-all!important}\n'''
+          if 'home-label-and-info-confirmation-v2' not in s:
+              pos = s.find('</style>')
+              if pos >= 0:
+                  s = s[:pos] + css + s[pos:]
+
+          js = '''\n<script>\n(function(){\n  document.addEventListener('click',function(e){\n    var a=e.target.closest && e.target.closest('a.info-item');\n    if(!a) return;\n    if(!window.confirm(((a.querySelector('.info-title')||a).textContent||'この情報').trim()+'\\n\\n外部サイトを開きますか？')){\n      e.preventDefault();\n      e.stopImmediatePropagation();\n    }\n  },true);\n})();\n</script>\n'''
+          if 'info-confirmation-v2' not in s:
+              js = js.replace('<script>', '<script>/* info-confirmation-v2 */', 1)
+              pos = s.rfind('</body>')
+              if pos >= 0:
+                  s = s[:pos] + js + s[pos:]
+
+          p.write_text(s, encoding='utf-8')
+          print('patched', 'home-label-and-info-confirmation-v2' in s, 'info-confirmation-v2' in s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add 'デモアプリ.html'
+          if git diff --cached --quiet; then
+            echo 'No changes'
+          else
+            git commit -m 'ホームの文字サイズと情報リンク確認を修正'
+            git push
+          fi
