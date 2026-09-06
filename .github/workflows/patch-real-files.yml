@@ -1,0 +1,41 @@
+name: Patch real app files
+
+"on":
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('デモアプリ.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '/* direct-ui-fix-20260906 */'
+          if marker not in s:
+              s = s.replace('</style>', marker + '\n.quick-link{font-size:10.5px!important;white-space:nowrap!important;word-break:keep-all!important}\n.quick-link small{font-size:10.5px!important;white-space:nowrap!important}', 1) + '</style>'
+              patch = '''<script>/* direct-info-confirmation */\ndocument.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.info-item');if(!a)return;if(!window.confirm(((a.querySelector('.info-title')||a).textContent||'この情報').trim()+'\\n\\n外部サイトを開きますか？')){e.preventDefault();e.stopImmediatePropagation();}},true);\n</script>'''
+              s = s.replace('</body>', patch + '</body>', 1)
+              p.write_text(s, encoding='utf-8')
+              print('patched')
+          else:
+              print('already patched')
+          PY
+      - name: Commit and cleanup
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add 'デモアプリ.html'
+          git rm .github/workflows/patch-real-files.yml
+          git rm .github/workflows/apply-ui-fix.yml || true
+          git commit -m 'ホームの文字サイズと情報リンク確認を修正 [direct-ui-fix]'
+          git push
