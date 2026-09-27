@@ -31,14 +31,19 @@ const ITEMS=[
 {name:'子育てタウン',category:'妊娠・育児',type:'アプリ',owner:'それ以外',desc:'自治体の子育て情報をまとめて確認できるサービス。',url:'https://play.google.com/store/apps/details?id=jp.mamafre.mamafre&hl=ja'},
 {name:'Famm',category:'家族・記録',type:'アプリ',owner:'それ以外',desc:'家族の写真や成長記録をまとめて残せるサービス。',url:'https://famm.us/'},
 {name:'みてね',category:'家族・記録',type:'アプリ',owner:'それ以外',desc:'家族で写真や動画を共有できるアルバムアプリ。',url:'https://mitene.us/'},
-{name:'BABY365',category:'家族・記録',type:'アプリ',owner:'それ以外',desc:'子どもの成長や思い出を記録できるサービス。',url:'https://baby365.net/'}
+{name:'BABY365',category:'家族・記録',type:'アプリ',owner:'それ以外',desc:'子どもの成長や思い出を記録できるサービス。',url:'https://baby365.net/'},
+{name:'キッズドクター',category:'妊娠・育児',type:'アプリ',owner:'それ以外',desc:'夜間や休日の体調不良時に、看護師へのチャット相談や医師のオンライン診療が受けられる。',url:'https://kids-doctor.jp/'},
+{name:'小児科オンライン',category:'妊娠・育児',type:'サイト',owner:'それ以外',desc:'小児科医や助産師にスマホから直接チャット・ビデオ通話で相談できるサービス。',url:'https://syounika.jp/'},
+{name:'ステップ離乳食',category:'妊娠・育児',type:'アプリ',owner:'それ以外',desc:'栄養士監修の食材リストで「食べた・未経験・NG」をチェックでき、月齢に応じた離乳食の進め方がわかる。',url:'https://karada-note.jp/'},
+{name:'子育てシェア（AsMama）',category:'家族・記録',type:'アプリ',owner:'それ以外',desc:'知人や近所のママパパ同士で、子どもの送り迎えや託児を頼み合える仕組み。',url:'https://asmama.jp/kosodate-share/'},
+{name:'キャリーオン（CarryOn）',category:'家族・記録',type:'サイト',owner:'それ以外',desc:'サイズアウトした子供服・ベビー服を査定買取・購入できるサービス。',url:'https://carryonmall.com/'}
 ];
 const ALIASES={'家族アルバム みてね':'みてね','こども家庭庁':'こども家庭庁｜公式サイト','厚生労働省':'厚生労働省｜共育（トモイク）プロジェクト','共育プロジェクト':'厚生労働省｜共育（トモイク）プロジェクト'};
 const MATRIX=[
 {title:'お金',desc:'家計・将来のお金',items:['Zaim','マネーフォワード ME','MILIZE「ミルイゼ」']},
 {title:'時間・仕事',desc:'予定・育休・働き方',items:['TimeTree','厚生労働省｜共育（トモイク）プロジェクト','パパninaru 育休シミュレーター']},
-{title:'妊娠・育児',desc:'妊娠・子育ての情報',items:['トツキトオカ','ぴよログ','ママリ','ルナルナ','こども家庭庁｜公式YouTube','こども家庭庁｜公式X','こども家庭庁｜公式note','こども家庭庁｜公式サイト','母子健康手帳情報支援サイト','母子モ','子育てタウン']},
-{title:'家族・記録',desc:'共有・思い出・成長記録',items:['Famm','みてね','BABY365']}
+{title:'妊娠・育児',desc:'妊娠・子育ての情報',items:['トツキトオカ','ぴよログ','ママリ','ルナルナ','こども家庭庁｜公式YouTube','こども家庭庁｜公式X','こども家庭庁｜公式note','こども家庭庁｜公式サイト','母子健康手帳情報支援サイト','母子モ','子育てタウン','キッズドクター','小児科オンライン','ステップ離乳食']},
+{title:'家族・記録',desc:'共有・思い出・成長記録',items:['Famm','みてね','BABY365','子育てシェア（AsMama）','キャリーオン（CarryOn）']}
 ];
 const FALLBACK={Zaim:'家','マネーフォワード ME':'資','MILIZE「ミルイゼ」':'資',TimeTree:'時',Famm:'写','みてね':'写','家族アルバム みてね':'写',BABY365:'記','トツキトオカ':'妊',ぴよログ:'育',ママリ:'相',ルナルナ:'月','厚生労働省｜共育（トモイク）プロジェクト':'厚','パパninaru 育休シミュレーター':'育','子育てタウン':'子','母子モ':'母','こども家庭庁｜公式YouTube':'▶','こども家庭庁｜公式X':'𝕏','こども家庭庁｜公式note':'n','こども家庭庁｜公式サイト':'庁','母子健康手帳情報支援サイト':'母'};
 function getItems(){return ITEMS.map(x=>Object.assign({},x));}
