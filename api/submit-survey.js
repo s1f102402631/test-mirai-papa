@@ -1,7 +1,5 @@
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL);
-
 const ALLOWED = {
   q1: ['男性', '女性', '回答しない'],
   q2: ['パパ・ママ', 'これからなる可能性が少しでもある', 'その他'],
@@ -14,6 +12,16 @@ const SCALE_FIELDS = [
   'q4_after',
   'q5_before',
   'q5_after',
+];
+
+// デモアプリ.html の TYPES と同じ名前
+const DIAGNOSIS_TYPES = [
+  '自分軸の航海士',
+  '暮らしの設計者',
+  '家族バランサー',
+  '伴走するパートナー',
+  '家族チームメーカー',
+  '未来の家族ナビゲーター',
 ];
 
 function isValidScale(value) {
@@ -32,6 +40,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'DATABASE_URL is not configured.' });
     }
 
+    const sql = neon(process.env.DATABASE_URL);
+
     const body = req.body || {};
 
     if (!ALLOWED.q1.includes(body.q1) || !ALLOWED.q2.includes(body.q2)) {
@@ -44,6 +54,22 @@ export default async function handler(req, res) {
       }
     }
 
+    // 診断を終えずに回答した場合は score / diagnosis_type が無いので NULL で保存する
+    let score = null;
+    let diagnosisType = null;
+    if (body.score !== undefined && body.score !== null) {
+      score = Number(body.score);
+      if (!Number.isInteger(score) || score < 0 || score > 100) {
+        return res.status(400).json({ error: '回答内容が正しくありません。' });
+      }
+    }
+    if (body.diagnosis_type !== undefined && body.diagnosis_type !== null) {
+      if (!DIAGNOSIS_TYPES.includes(body.diagnosis_type)) {
+        return res.status(400).json({ error: '回答内容が正しくありません。' });
+      }
+      diagnosisType = body.diagnosis_type;
+    }
+
     await sql`
       INSERT INTO survey_responses (
         gender,
@@ -53,7 +79,9 @@ export default async function handler(req, res) {
         q4_before,
         q4_after,
         q5_before,
-        q5_after
+        q5_after,
+        score,
+        diagnosis_type
       )
       VALUES (
         ${body.q1},
@@ -63,7 +91,9 @@ export default async function handler(req, res) {
         ${Number(body.q4_before)},
         ${Number(body.q4_after)},
         ${Number(body.q5_before)},
-        ${Number(body.q5_after)}
+        ${Number(body.q5_after)},
+        ${score},
+        ${diagnosisType}
       )
     `;
 
