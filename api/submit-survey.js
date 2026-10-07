@@ -69,6 +69,14 @@ export default async function handler(req, res) {
       }
       diagnosisType = body.diagnosis_type;
     }
+    // 「最後にひとつだけ」の質問（自分が担うと思う家事・育児の割合 0〜10割）。未回答なら NULL
+    let shareEstimate = null;
+    if (body.share_estimate !== undefined && body.share_estimate !== null) {
+      shareEstimate = Number(body.share_estimate);
+      if (!Number.isInteger(shareEstimate) || shareEstimate < 0 || shareEstimate > 10) {
+        return res.status(400).json({ error: '回答内容が正しくありません。' });
+      }
+    }
 
     await sql`
       INSERT INTO survey_responses (
@@ -81,7 +89,8 @@ export default async function handler(req, res) {
         q5_before,
         q5_after,
         score,
-        diagnosis_type
+        diagnosis_type,
+        share_estimate
       )
       VALUES (
         ${body.q1},
@@ -93,7 +102,8 @@ export default async function handler(req, res) {
         ${Number(body.q5_before)},
         ${Number(body.q5_after)},
         ${score},
-        ${diagnosisType}
+        ${diagnosisType},
+        ${shareEstimate}
       )
     `;
 
