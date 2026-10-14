@@ -5,14 +5,7 @@ const ALLOWED = {
   q2: ['パパ・ママ', 'これからなる可能性が少しでもある', 'その他'],
 };
 
-const SCALE_FIELDS = [
-  'q3_before',
-  'q3_after',
-  'q4_before',
-  'q4_after',
-  'q5_before',
-  'q5_after',
-];
+const CHANGE_FIELDS = ['q3_change', 'q4_change', 'q5_change'];
 
 // デモアプリ.html の TYPES と同じ名前
 const DIAGNOSIS_TYPES = [
@@ -24,9 +17,9 @@ const DIAGNOSIS_TYPES = [
   '未来の家族ナビゲーター',
 ];
 
-function isValidScale(value) {
+function isValidChange(value) {
   const n = Number(value);
-  return Number.isInteger(n) && n >= 1 && n <= 10;
+  return Number.isInteger(n) && n >= -5 && n <= 5;
 }
 
 export default async function handler(req, res) {
@@ -48,8 +41,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '回答内容が正しくありません。' });
     }
 
-    for (const field of SCALE_FIELDS) {
-      if (!isValidScale(body[field])) {
+    for (const field of CHANGE_FIELDS) {
+      if (!isValidChange(body[field])) {
         return res.status(400).json({ error: '回答内容が正しくありません。' });
       }
     }
@@ -88,6 +81,9 @@ export default async function handler(req, res) {
         q4_after,
         q5_before,
         q5_after,
+        q3_change,
+        q4_change,
+        q5_change,
         score,
         diagnosis_type,
         share_estimate
@@ -100,7 +96,12 @@ export default async function handler(req, res) {
         ${Number(body.q4_before)},
         ${Number(body.q4_after)},
         ${Number(body.q5_before)},
-        ${Number(body.q5_after)},
+        5,
+        5,
+        5,
+        ${Number(body.q3_change)},
+        ${Number(body.q4_change)},
+        ${Number(body.q5_change)},
         ${score},
         ${diagnosisType},
         ${shareEstimate}
