@@ -23,7 +23,10 @@ export default async function handler(req, res) {
         AVG(q4_before)::float8 AS q4_before,
         AVG(q4_after)::float8 AS q4_after,
         AVG(q5_before)::float8 AS q5_before,
-        AVG(q5_after)::float8 AS q5_after
+        AVG(q5_after)::float8 AS q5_after,
+        AVG(COALESCE(q3_change, q3_after - q3_before))::float8 AS q3_change,
+        AVG(COALESCE(q4_change, q4_after - q4_before))::float8 AS q4_change,
+        AVG(COALESCE(q5_change, q5_after - q5_before))::float8 AS q5_change
       FROM survey_responses
       GROUP BY diagnosis_type
     `;
