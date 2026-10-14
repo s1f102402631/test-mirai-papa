@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS survey_responses (
   q4_after INTEGER NOT NULL CHECK (q4_after BETWEEN 1 AND 10),
   q5_before INTEGER NOT NULL CHECK (q5_before BETWEEN 1 AND 10),
   q5_after INTEGER NOT NULL CHECK (q5_after BETWEEN 1 AND 10),
+  q3_change INTEGER CHECK (q3_change BETWEEN -5 AND 5),
+  q4_change INTEGER CHECK (q4_change BETWEEN -5 AND 5),
+  q5_change INTEGER CHECK (q5_change BETWEEN -5 AND 5),
   score INTEGER CHECK (score BETWEEN 0 AND 100),
   diagnosis_type TEXT,
   share_estimate INTEGER CHECK (share_estimate BETWEEN 0 AND 10)
@@ -24,3 +27,8 @@ ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS share_estimate INTEGER CHE
 
 CREATE INDEX IF NOT EXISTS survey_responses_submitted_at_idx
   ON survey_responses (submitted_at);
+
+-- 変化量アンケート（−5〜＋5、0は変化なし）用の列を既存テーブルにも追加
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q3_change INTEGER CHECK (q3_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q4_change INTEGER CHECK (q4_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q5_change INTEGER CHECK (q5_change BETWEEN -5 AND 5);
