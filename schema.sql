@@ -32,3 +32,11 @@ CREATE INDEX IF NOT EXISTS survey_responses_submitted_at_idx
 ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q3_change INTEGER CHECK (q3_change BETWEEN -5 AND 5);
 ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q4_change INTEGER CHECK (q4_change BETWEEN -5 AND 5);
 ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q5_change INTEGER CHECK (q5_change BETWEEN -5 AND 5);
+
+
+-- Q6〜Q10の変化量アンケート（−5〜＋5）用の列
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q6_change INTEGER CHECK (q6_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q7_change INTEGER CHECK (q7_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q8_change INTEGER CHECK (q8_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q9_change INTEGER CHECK (q9_change BETWEEN -5 AND 5);
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS q10_change INTEGER CHECK (q10_change BETWEEN -5 AND 5);
