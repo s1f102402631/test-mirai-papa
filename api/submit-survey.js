@@ -5,7 +5,7 @@ const ALLOWED = {
   q2: ['パパ・ママ', 'これからなる可能性が少しでもある', 'その他'],
 };
 
-const CHANGE_FIELDS = ['q3_change', 'q4_change', 'q5_change'];
+const CHANGE_FIELDS = ['q3_change', 'q4_change', 'q5_change', 'q6_change', 'q7_change', 'q8_change', 'q9_change', 'q10_change'];
 
 // デモアプリ.html の TYPES と同じ名前
 const DIAGNOSIS_TYPES = [
@@ -84,6 +84,11 @@ export default async function handler(req, res) {
         q3_change,
         q4_change,
         q5_change,
+        q6_change,
+        q7_change,
+        q8_change,
+        q9_change,
+        q10_change,
         score,
         diagnosis_type,
         share_estimate
@@ -100,6 +105,11 @@ export default async function handler(req, res) {
         ${Number(body.q3_change)},
         ${Number(body.q4_change)},
         ${Number(body.q5_change)},
+        ${Number(body.q6_change)},
+        ${Number(body.q7_change)},
+        ${Number(body.q8_change)},
+        ${Number(body.q9_change)},
+        ${Number(body.q10_change)},
         ${score},
         ${diagnosisType},
         ${shareEstimate}
