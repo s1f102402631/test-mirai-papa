@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 440" role="img" aria-labelledby="title desc">
+<title id="title">夕焼けを眺める親子</title><desc id="desc">父親と子どもが草地に座り、夕日に染まる湖と街を眺めている。</desc>
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#586b9a"/><stop offset=".42" stop-color="#f49b91"/><stop offset=".68" stop-color="#ffc66f"/><stop offset="1" stop-color="#f8d69b"/></linearGradient>
+ <linearGradient id="water" x2="0" y2="1"><stop stop-color="#e6a18d"/><stop offset=".55" stop-color="#f5b86d"/><stop offset="1" stop-color="#445678"/></linearGradient>
+ <linearGradient id="hill" x2="0" y2="1"><stop stop-color="#283b59"/><stop offset="1" stop-color="#111c31"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#fff9cf" stop-opacity=".9"/><stop offset="1" stop-color="#ffd27b" stop-opacity="0"/></radialGradient>
+ <clipPath id="clip"><rect width="1440" height="440" rx="28"/></clipPath>
+</defs>
+<g clip-path="url(#clip)">
+ <rect width="1440" height="440" fill="url(#sky)"/><circle cx="1030" cy="205" r="175" fill="url(#glow)"/><circle cx="1030" cy="205" r="25" fill="#fff9d0"/>
+ <g fill="#ffd4bc" opacity=".8">
+ <path d="M0 130 Q55 94 98 125 T205 112 T310 124 T405 110 T505 130 T610 105 T720 122 T840 105 T950 122 T1060 101 T1180 120 T1320 100 T1440 116 L1440 145 Q1370 132 1300 147 T1150 140 T1000 149 T850 141 T700 151 T550 140 T400 152 T250 141 T100 153 L0 150Z"/>
+ <path d="M730 92 Q770 60 810 87 T890 76 T970 88 T1050 70 T1130 86 T1220 67 T1320 84 T1440 62 L1440 105 Q1370 96 1300 107 T1160 101 T1020 110 T880 103 T730 112Z" opacity=".65"/>
+ </g>
+ <path d="M0 270 L80 246 150 255 235 222 300 249 385 228 465 257 555 226 640 251 720 225 815 253 900 229 990 255 1080 225 1170 249 1260 220 1350 249 1440 226 V330 H0Z" fill="#6e7394" opacity=".72"/>
+ <path d="M0 300 L120 274 225 292 335 266 450 298 560 273 665 296 780 269 895 299 1000 273 1115 294 1235 263 1340 292 1440 272 V350 H0Z" fill="#535d7d"/>
+ <path d="M0 298 Q200 283 390 299 T760 294 T1120 296 T1440 287 V440 H0Z" fill="url(#water)"/>
+ <g opacity=".8" stroke="#ffe4a0" stroke-linecap="round">
+ <path d="M960 279h170 M985 291h138 M1004 305h106 M1024 318h86 M1034 331h72 M1042 345h61 M1018 359h86 M1050 374h55" stroke-width="3"/>
+ <path d="M0 321h410 M90 334h320 M550 326h180 M1220 328h160 M1150 343h220 M740 349h130 M0 358h310" stroke="#f8c2a0" stroke-width="2"/>
+ </g>
+ <g fill="#24334d">
+  <path d="M0 325v-40h22v-21h25v29h15v-44h30v36h17v-20h24v60z"/>
+  <path d="M95 329v-35h26v-24h30v19h17v-47h38v37h23v-21h27v71z"/>
+  <path d="M350 332v-28h22v-21h30v49z M410 332v-48h25v-20h38v68z M474 332v-30h22v-18h29v48z"/>
+  <path d="M560 333v-42h22v-17h29v59z M618 333v-32h26v-25h36v57z M690 333v-45h22v-18h31v63z"/>
+  <path d="M1145 332v-34h25v-22h34v56z M1204 332v-50h26v-20h34v70z M1272 332v-34h24v-18h36v52z M1340 332v-54h30v-22h38v76z"/>
+ </g>
+ <g fill="#ffda9a" opacity=".8">
+  <path d="M25 294h4v6h-4z M38 280h4v6h-4z M110 302h4v5h-4z M143 283h4v5h-4z M190 279h4v6h-4z M220 300h4v5h-4z M374 314h4v5h-4z M432 299h4v5h-4z M487 311h4v5h-4z M578 306h4v5h-4z M636 310h4v5h-4z M704 300h4v5h-4z M1162 310h4v5h-4z M1220 294h4v5h-4z M1288 306h4v5h-4z M1360 292h4v5h-4z"/>
+ </g>
+ <path d="M0 366 Q150 333 310 363 T630 358 T950 362 T1240 354 T1440 365 V440 H0Z" fill="#1b2a43"/>
+ <!-- grasses framing the foreground -->
+ <g fill="none" stroke-linecap="round">
+  <g stroke="#17273e" stroke-width="7"><path d="M0 440Q25 350 15 300 M22 440Q55 367 85 348 M70 440Q73 376 120 356 M1380 440Q1370 363 1400 326 M1430 440Q1410 385 1440 365 M1300 440Q1320 380 1294 353"/></g>
+  <g stroke="#b47c55" stroke-width="3"><path d="M40 440l-7-55 M85 440l20-63 M128 440l-2-42 M1250 440l-18-64 M1340 440l15-58 M1390 440l-4-44"/></g>
+ </g>
+ <!-- seated father -->
+ <g>
+  <path d="M380 245 Q366 210 393 191 Q421 173 445 198 Q459 212 450 241 L465 286 Q482 310 471 351 L425 369 L356 355 Q347 326 363 291Z" fill="#17263e" stroke="#35445f" stroke-width="3"/>
+  <path d="M378 247 Q358 257 350 289 L337 345 Q336 366 358 374 L414 376 L435 354 L420 299Z" fill="#1b2a43"/>
+  <path d="M389 210 Q378 180 400 157 Q421 138 446 159 Q466 179 451 211 L438 232 L402 232Z" fill="#172239"/>
+  <path d="M395 165 Q420 143 445 165 L452 185 L444 205 L430 217 L406 211 L392 191Z" fill="#1b2942"/>
+  <path d="M400 235l20 22 25-20 M421 258l-5 83" fill="none" stroke="#34435d" stroke-width="3" opacity=".8"/>
+  <path d="M362 352 Q402 345 444 357 L487 391 Q494 405 474 410 L374 410 Q340 400 342 380Z" fill="#18263d"/>
+  <path d="M360 377 Q410 385 469 393" fill="none" stroke="#39465c" stroke-width="3"/>
+ </g>
+ <!-- child -->
+ <g>
+  <path d="M477 296 Q463 276 480 259 Q497 243 516 260 Q530 276 520 300 L535 336 Q539 358 523 374 L476 371 Q461 354 469 332Z" fill="#3a3b54" stroke="#55516a" stroke-width="3"/>
+  <path d="M477 267 Q470 247 489 230 Q507 216 524 234 Q538 250 526 269 L515 283 L490 282Z" fill="#202a42"/>
+  <path d="M488 284l13 14 17-12 M502 299v44" fill="none" stroke="#5a5268" stroke-width="2.5"/>
+  <path d="M476 356 Q503 365 526 354 L555 385 Q560 399 544 403 L483 400 Q461 391 464 378Z" fill="#28344d"/>
+ </g>
+ <path d="M0 412 Q140 385 260 408 T520 410 T790 407 T1080 414 T1440 403 V440 H0Z" fill="#111d31"/>
+</g></svg>
