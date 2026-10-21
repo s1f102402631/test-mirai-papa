@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 280" role="img" aria-labelledby="t d">
+<title id="t">夕焼けを眺める親子</title><desc id="d">シンプルな図形で描かれた親子と街並み、夕日と水辺。</desc>
+<defs>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#717b9d"/><stop offset=".52" stop-color="#e8a0a0"/><stop offset="1" stop-color="#ffc77c"/></linearGradient>
+ <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8c47e"/><stop offset="1" stop-color="#f2a95f"/></linearGradient>
+ <clipPath id="clip"><rect width="900" height="280" rx="24"/></clipPath>
+</defs>
+<g clip-path="url(#clip)">
+ <rect width="900" height="280" fill="url(#sky)"/>
+ <g fill="#f7c8b5" opacity=".95">
+ <path d="M-20 78 Q18 28 60 72 Q87 37 119 66 Q153 18 184 72 Q218 117 249 68 Q281 22 308 67 Q340 111 372 60 Q402 1 430 61 Q456 102 493 58 Q529 9 552 57 Q582 111 610 60 Q643 -3 668 56 Q697 104 727 50 Q755 2 783 51 Q815 95 842 50 Q874 7 920 62 L920 100 Q876 88 840 105 Q800 121 768 91 Q735 70 705 104 Q671 135 642 91 Q615 59 584 92 Q548 124 515 91 Q479 69 446 96 Q411 122 379 91 Q345 61 315 93 Q280 121 248 91 Q214 65 185 94 Q152 120 123 91 Q91 67 60 91 Q25 106 -20 98Z"/>
+ <path d="M520 41 Q552 19 578 39 Q601 50 624 38 Q653 22 678 42 Q647 53 623 51 Q591 66 566 50 Q542 42 520 41Z" opacity=".65"/>
+ </g>
+ <circle cx="655" cy="123" r="16" fill="#fff7d4"/>
+ <path d="M0 174 L44 160 76 168 120 148 164 164 210 151 255 168 302 151 347 166 391 151 437 166 484 150 528 165 575 153 618 166 665 151 711 167 756 149 802 165 850 151 900 165 V220 H0Z" fill="#8790a8"/>
+ <path d="M0 193 L60 181 114 195 175 177 235 194 300 179 365 194 430 180 495 194 560 180 620 194 680 179 740 194 800 180 900 193 V240 H0Z" fill="#4b5a77"/>
+ <path d="M0 195 Q160 186 320 197 T640 195 T900 193 V280 H0Z" fill="url(#water)"/>
+ <g fill="#26364e">
+  <path d="M0 205h14v-18h17v13h15v-25h21v29h17v-13h22v31H0z"/>
+  <path d="M96 222v-23h18v-16h22v18h15v-27h24v48z"/>
+  <path d="M360 220v-18h15v-15h20v33z M398 220v-30h17v-12h24v42z M443 220v-20h15v-12h21v32z"/>
+  <path d="M755 220v-24h18v-17h22v16h13v-24h26v49z M829 220v-20h16v-14h23v34z"/>
+ </g>
+ <g fill="#f9dca6" opacity=".8">
+  <path d="M9 197h4v4H9z M28 187h4v4h-4z M55 201h4v4h-4z M109 205h4v4h-4z M139 190h4v4h-4z M377 207h4v4h-4z M408 194h4v4h-4z M452 206h4v4h-4z M772 202h4v4h-4z M807 188h4v4h-4z M850 205h4v4h-4z"/>
+ </g>
+ <g stroke="#fff0bf" stroke-width="2" opacity=".85" stroke-linecap="round">
+  <path d="M605 157h97 M620 166h72 M632 175h54 M641 184h37 M635 193h48 M648 202h28"/>
+ </g>
+ <!-- seated adult silhouette -->
+ <g fill="#1d2c45">
+  <path d="M263 155 Q248 137 259 120 Q270 102 286 113 Q301 126 291 146 L301 174 Q308 190 296 207 L254 207 Q243 193 251 177Z"/>
+  <path d="M254 204 Q274 199 293 207 L315 227 Q321 238 307 242 L245 242 Q231 236 239 222Z"/>
+  <path d="M258 126 Q250 106 266 91 Q281 80 296 94 Q307 106 299 126 L287 138 L267 137Z"/>
+ </g>
+ <path d="M271 140l10 13 11-12 M281 153v37" fill="none" stroke="#34435a" stroke-width="2"/>
+ <!-- child silhouette -->
+ <g fill="#38425a">
+  <path d="M304 174 Q294 161 305 150 Q316 139 327 152 Q337 164 329 178 L337 198 Q340 211 330 220 L301 219 Q291 208 298 195Z"/>
+  <path d="M305 153 Q300 139 312 131 Q323 125 332 137 Q338 147 330 158 L320 165 L309 162Z"/>
+  <path d="M300 218 Q316 223 333 218 L346 234 Q349 242 338 244 L302 241 Q292 235 300 218Z"/>
+ </g>
+ <path d="M312 166l9 9 8-8 M320 176v28" fill="none" stroke="#596078" stroke-width="2"/>
+ <path d="M0 244 Q85 224 171 242 T340 241 T510 239 T680 243 T900 237 V280 H0Z" fill="#1e2e47"/>
+ <g fill="none" stroke-linecap="round">
+  <g stroke="#18263c" stroke-width="3"><path d="M0 280l10-39 M18 280l17-28 M70 280l-5-31 M866 280l-8-39 M889 280l-14-27"/></g>
+  <g stroke="#b88b67" stroke-width="2"><path d="M43 280l7-20 M82 280l-2-14 M838 280l-5-20 M878 280l7-17"/></g>
+ </g>
+</g></svg>
